@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3 python3
+#!/usr/local/bin/python3
 #
 #
 #
@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 
-init_matrix = np.array([[[3., 0., 0.],
+init_matrix = np.array([[[3., 0., 0],
                         [0., 1., 0.],
                         [0., 0., 2.]]])
 
@@ -63,7 +63,7 @@ def remove_duplicates(sudoku):
 def clear_row(sudoku, row, col):
     """Clears the row"""
     value = int(sudoku[0][row][col])
-    print("value= ", value)
+    print("value von row", value)
     for i in range(0,3):
         print(i,row,col)
         sudoku[value][row][i]=0
@@ -75,6 +75,7 @@ def clear_col(sudoku, row, col):
     print("value= ", value)
     for i in range(0,3):
         sudoku[value][i][col]=0
+    return sudoku
 
 
 #   ____
@@ -98,10 +99,10 @@ def main():
     matrix2=remove_duplicates(sudoku=matrix1)
     print(matrix2)
     print("\nTest 2\n")
-    matrix3=clear_col(sudoku=matrix2, row=0, col=0)
+    matrix3=clear_row(sudoku=matrix2, row=0, col=0)
     print(matrix3)
-    matrix4=clear_row(sudoku=matrix3, row=0, col=0)
-    print(matrix4)
+    matrix4=clear_col(sudoku=matrix3, row=0, col=0)
+    print("letzte matrix: ", matrix4)
 
 if __name__ == '__main__':
     main()
