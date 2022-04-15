@@ -87,6 +87,11 @@ def clear_col(sudoku, row, col):
         sudoku[value][i][col]=0
     return sudoku
 
+def clear_row_all(sudoku):
+    for i in range(0,9):
+        for j in range(0,9):
+            clear_row(sudoku=sudoku, row=i, col=j)
+    return sudoku
 
 
 #   ____
@@ -114,6 +119,9 @@ def main():
     matrix5 = clear_row(sudoku=matrix4, row=1, col=1)
     matrix6 = clear_col(sudoku=matrix5, row=1, col=1)
     print(matrix6)
+
+    matrix7 = clear_row_all(sudoku=matrix6)
+    print(matrix7)
 
 if __name__ == '__main__':
     main()
