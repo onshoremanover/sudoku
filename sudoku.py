@@ -11,21 +11,21 @@ init_matrix = np.array([[[3., 0., 0.],
                         [0., 1., 0.],
                         [0., 0., 2.]]])
 
-def create_3d_matrix(rows, cols, depth):
+def create_3d_matrix(depth, row, col):
     """Fills the backtracking matrix with zeros"""
-    return np.zeros((rows, cols, depth))
+    return np.zeros((depth, row, col))
 
-def fill_3d_matrix(matrix, row, col, depth, value):
+def fill_3d_matrix(matrix, depth, row, col, value):
     """Fills any parts with numbers"""
-    matrix[row][col][depth]=value
+    matrix[depth][row][col]=value
     return matrix
 
-def put_depth_in_matrix(matrix, row, col, depth, value):
+def put_depth_in_matrix(matrix, depth, row, col, value):
     """Populates the backtracking matrix with increasing numbers as to fill it for checking them later"""
     for i in range(0,3):
         for j in range(0,3):
             for k in range(0,3):
-                matrix[row+i][col+j][depth+k]=value+i
+                matrix[depth+i][row+j][col+k]=value+i
     return matrix    
 
 def check_if_matrix_is_full(matrix):
@@ -57,19 +57,25 @@ def remove_duplicates(sudoku):
         for j in range(0,3):
             for k in range(0,3):
                 if sudoku[0][j][k]!=0:
-                        sudoku[i][j][k]=0
-        
+                        sudoku[i][j][k]=0    
     return sudoku
 
+def clear_row(sudoku, row, col):
+    """Clears the row"""
+    value = int(sudoku[0][row][col])
+    print("value= ", value)
+    for i in range(0,3):
+        print(i,row,col)
+        sudoku[value][row][i]=0
+    return sudoku
 
-
-def clear_col(sudoku, col, depth):
+def clear_col(sudoku, row, col):
     """Clears the cols"""
-    value = sudoku[0][col][depth]
-    for i in range(1,4):
-        sudoku[i][col][depth]=0
-        sudoku[i][col][depth]
-    return sudoku
+    value = int(sudoku[0][row][col])
+    print("value= ", value)
+    for i in range(0,3):
+        sudoku[value][i][col]=0
+
 
 #   ____
 #  |  _ \ _ __ ___   __ _ _ __ __ _ _ __ ___
@@ -80,9 +86,9 @@ def clear_col(sudoku, col, depth):
 
 
 def main():
-    matrix=create_3d_matrix(rows=3, cols=3, depth=3)
+    matrix=create_3d_matrix(depth=3, row=3, col=3)
 
-    matrix=put_depth_in_matrix(matrix=matrix, row=0, col=0, depth=0, value=1)
+    matrix=put_depth_in_matrix(matrix=matrix, depth=0, row=0, col=0, value=1)
     matrix1=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
     check2=check_if_matrix_is_full(matrix=matrix1)
     print(check2)
@@ -92,9 +98,11 @@ def main():
     matrix2=remove_duplicates(sudoku=matrix1)
     print(matrix2)
     print("\nTest 2\n")
-    matrix3=clear_col(sudoku=matrix2, col=0, depth=0)
+    matrix3=clear_col(sudoku=matrix2, row=0, col=0)
     print(matrix3)
-
+    matrix4=clear_row(sudoku=matrix3, row=0, col=0)
+    print(matrix4)
 
 if __name__ == '__main__':
     main()
+
