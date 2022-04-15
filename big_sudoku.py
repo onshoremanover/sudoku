@@ -11,15 +11,17 @@ nr_of_row = 9
 nr_of_depth = 10
 
 
-init_matrix = np.array([[[3., 0., 0.,    9., 4., 0.,    0., 0. ,1.],
-                        [ 0., 1., 0.,    0., 4., 6.,    0., 4., 2.],
-                        [ 0., 0., 0.,    0., 0., 0.,    0., 0., 0.],
-                        [ 0., 0., 0.,    0., 0., 0.,    0., 0., 0.],
-                        [ 0., 0., 0.,    0., 0., 0.,    0., 0., 3.],
-                        [ 0., 0., 0.,    0., 0., 0.,    0., 0., 2.],
-                        [ 0., 0., 0.,    0., 0., 4.,    0., 0., 2.],
-                        [ 0., 0., 0.,    0., 0., 3.,    0., 0., 2.],
-                        [ 0., 0., 0.,    0., 0., 5.,    6., 7., 8.]]])
+init_matrix = np.array([[[6., 2., 0.,    3., 4., 5.,    8., 0. ,0.],
+                        [ 0., 5., 8.,    7., 2., 6.,    3., 4., 0.],
+                        [ 3., 7., 4.,    8., 9., 1.,    2., 5., 6.],
+
+                        [ 4., 3., 0.,    1., 6., 0.,    5., 0., 8.],
+                        [ 5., 0., 6.,    4., 7., 0.,    1., 3., 0.],
+                        [ 0., 0., 2.,    5., 3., 0.,    0., 6., 4.],
+
+                        [ 8., 6., 5.,    0., 0., 3.,    0., 0., 2.],
+                        [ 2., 4., 3.,    6., 0., 7.,    0., 0., 2.],
+                        [ 0., 9., 0.,    2., 5., 4.,    6., 8., 3.]]])
 
 def create_3d_matrix(depth, row, col):
     """Fills the backtracking matrix with zeros"""
@@ -71,26 +73,38 @@ def remove_duplicates(sudoku):
     return sudoku
 
 def clear_row(sudoku, row, col):
-    """Clears the row"""
+    """Clears the row of a single value"""
     value = int(sudoku[0][row][col])
     print("value von row", value)
+    if value==0:
+        return sudoku
     for i in range(0,9):
-        print(i,row,col)
+        print("Row function: ",i,row,col)
         sudoku[value][row][i]=0
     return sudoku
 
 def clear_col(sudoku, row, col):
-    """Clears the cols"""
+    """Clears the cols of a single value"""
     value = int(sudoku[0][row][col])
     print("value= ", value)
+    if value==0:
+        return sudoku
     for i in range(0,9):
         sudoku[value][i][col]=0
     return sudoku
 
 def clear_row_all(sudoku):
+    """Loop function for clearing the rows"""
     for i in range(0,9):
         for j in range(0,9):
             clear_row(sudoku=sudoku, row=i, col=j)
+    return sudoku
+
+def clear_col_all(sudoku):
+    """Loop function for clearing the cols"""
+    for i in range(0,9):
+        for j in range(0,9):
+            clear_col(sudoku=sudoku, row=i, col=j)
     return sudoku
 
 
@@ -106,22 +120,26 @@ def main():
     matrix=create_3d_matrix(depth=9, row=9, col=9)
 
     matrix=put_depth_in_matrix(matrix=matrix, depth=0, row=0, col=0, value=1)
-    matrix1=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
+    matrix=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
  
-    matrix2=remove_duplicates(sudoku=matrix1)
-    print(matrix2)
+    matrix=remove_duplicates(sudoku=matrix)
+    print(matrix)
     print("\nTest 2\n")
-    matrix3=clear_row(sudoku=matrix2, row=0, col=0)
-    print(matrix3)
-    matrix4=clear_col(sudoku=matrix3, row=0, col=0)
-    print("letzte matrix: ", matrix4)
 
-    matrix5 = clear_row(sudoku=matrix4, row=1, col=1)
-    matrix6 = clear_col(sudoku=matrix5, row=1, col=1)
-    print(matrix6)
+    matrix=clear_row(sudoku=matrix, row=0, col=0)
+    print(matrix)
+    matrix=clear_col(sudoku=matrix, row=0, col=0)
+    print("letzte matrix: ", matrix)
 
-    matrix7 = clear_row_all(sudoku=matrix6)
-    print(matrix7)
+    matrix = clear_row(sudoku=matrix, row=1, col=1)
+    matrix = clear_col(sudoku=matrix, row=1, col=1)
+    print(matrix)
+
+    matrix = clear_row_all(sudoku=matrix)
+    print(matrix)
+
+    matrix = clear_col_all(sudoku=matrix)
+    print(matrix)
 
 if __name__ == '__main__':
     main()
