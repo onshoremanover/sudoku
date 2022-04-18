@@ -3,34 +3,26 @@
 #
 #
 
+from numpy.core.fromnumeric import trace
 import pandas as pd
 import numpy as np
 
-nr_of_col = 9
-nr_of_row = 9
-nr_of_depth = 10
+init_matrix = np.array([[[6., 2., 0.,    3., 0., 0.,    0., 0. ,0.],
+                        [ 0., 5., 8.,    7., 0., 0.,    0., 4., 0.],
+                        [ 3., 7., 0.,    0., 9., 1.,    0., 5., 0.],
 
+                        [ 0., 0., 0.,    1., 6., 0.,    0., 0., 8.],
+                        [ 5., 0., 6.,    4., 0., 0.,    1., 3., 0.],
+                        [ 0., 0., 2.,    0., 3., 0.,    0., 6., 4.],
 
-init_matrix = np.array([[[6., 2., 0.,    3., 4., 5.,    8., 0. ,0.],
-                        [ 0., 5., 8.,    7., 2., 6.,    3., 4., 0.],
-                        [ 3., 7., 4.,    8., 9., 1.,    2., 5., 6.],
+                        [ 8., 6., 0.,    0., 0., 0.,    4., 0., 0.],
+                        [ 2., 4., 0.,    6., 0., 7.,    9., 0., 5.],
+                        [ 0., 9., 0.,    2., 5., 0.,    0., 8., 3.]]])
+                        
 
-                        [ 4., 3., 0.,    1., 6., 0.,    5., 0., 8.],
-                        [ 5., 0., 6.,    4., 7., 0.,    1., 3., 0.],
-                        [ 0., 0., 2.,    5., 3., 0.,    0., 6., 4.],
-
-                        [ 8., 6., 5.,    0., 0., 3.,    0., 0., 2.],
-                        [ 2., 4., 3.,    6., 0., 7.,    0., 0., 2.],
-                        [ 0., 9., 0.,    2., 5., 4.,    6., 8., 3.]]])
-
-def create_3d_matrix(depth, row, col):
-    """Fills the backtracking matrix with zeros"""
-    return np.zeros((depth, row, col))
-
-def fill_3d_matrix(matrix, depth, row, col, value):
-    """Fills any parts with numbers"""
-    matrix[depth][row][col]=value
-    return matrix
+def create_3d_matrix(row, col, depth):
+    """Creates the 3d matrix"""
+    return np.zeros((row, col, depth))
 
 def put_depth_in_matrix(matrix, depth, row, col, value):
     """Populates the backtracking matrix with increasing numbers as to fill it for checking them later"""
@@ -40,28 +32,10 @@ def put_depth_in_matrix(matrix, depth, row, col, value):
                 matrix[depth+i][row+j][col+k]=value+i
     return matrix    
 
-def check_if_matrix_is_full(matrix):
-    """Check for the beginning if everything the matrix is full"""
-    for i in range(1,10):
-        for j in range(0,9):
-            for k in range(0,9):
-                if matrix[i][j][k]==0:
-                    return False
-    return True
-
 def append_matrix_to_list(sudoku, matrix): 
-    """Add the initial matrix to the tot the backtracking matrix""" 
+    """Add the initial matrix to the front of the backtracking matrix""" 
     attached_matrix = np.append(sudoku, matrix, axis=0)
     return attached_matrix 
-
-def check_if_matrix_is_full_and_append(sudoku, matrix):
-    """Check for the beginning if everything the matrix is full"""
-    for i in range(1,9):
-        for j in range(0,8):
-            for k in range(0,8):
-                if matrix[i][j][k]==0:
-                    return False
-    return True
 
 def remove_duplicates(sudoku):
     """Removes the duplicates from the backtracking matrix"""
@@ -75,18 +49,16 @@ def remove_duplicates(sudoku):
 def clear_row(sudoku, row, col):
     """Clears the row of a single value"""
     value = int(sudoku[0][row][col])
-    print("value von row", value)
+    #print("value von row", value)
     if value==0:
         return sudoku
     for i in range(0,9):
-        print("Row function: ",i,row,col)
         sudoku[value][row][i]=0
     return sudoku
 
 def clear_col(sudoku, row, col):
     """Clears the cols of a single value"""
     value = int(sudoku[0][row][col])
-    print("value= ", value)
     if value==0:
         return sudoku
     for i in range(0,9):
@@ -107,6 +79,91 @@ def clear_col_all(sudoku):
             clear_col(sudoku=sudoku, row=i, col=j)
     return sudoku
 
+def depth_unique(sudoku, row, col,):
+    """Counts the unique numbers in the depth"""
+    value = int(sudoku[0][row][col])
+    a_list = []
+    if value!=0:
+        return sudoku
+    for i in range(1,10):
+        # Skips if it is a zero
+        if sudoku[i][row][col]==0:
+            continue
+        # Counts the unique numbers in the depth
+        a_list.append(i)
+        #print(a_list) 
+    if len(a_list)==1:
+        sudoku[0][row][col]=a_list[0]
+        #f"Sudoku:  {a_list}"
+        print("Sudoku:  ", a_list, "at position ",col,"",row)
+    
+    return sudoku
+
+def depth_unique_all(sudoku):
+    """Loop function for checking the unique numbers in the depth"""
+    for i in range(0,9):
+        for j in range(0,9):
+            depth_unique(sudoku=sudoku, row=i, col=j)
+    return sudoku
+
+def minisquare(sudoku, row, col):
+    """Checks the minisquare"""
+    value = int(sudoku[0][row][col])
+    if value == 0:
+        return sudoku
+    
+    if sudoku[0][row][col] in sudoku[0,0:3,0:3]:
+        print("lio")
+        sudoku[value,0:3,0:3]=0
+
+    elif sudoku[0][row][col] in sudoku[0,0:3,3:6]:
+        print("mio")
+        sudoku[value,0:3,3:6]=0
+
+    elif sudoku[0][row][col] in sudoku[0,0:3,6:9]:
+        print("reo")
+        sudoku[value,0:3,6:9]=0
+
+    elif sudoku[0][row][col] in sudoku[0,3:6,0:3]:
+        print("lim")
+        sudoku[value,3:6,0:3]=0
+
+    elif sudoku[0][row][col] in sudoku[0,3:6,3:6]:
+        print("mim")
+        sudoku[value,3:6,3:6]=0
+
+    elif sudoku[0][row][col] in sudoku[0,3:6,6:9]:
+        print("rem")
+        sudoku[value,3:6,6:9]=0
+
+    elif sudoku[0][row][col] in sudoku[0,6:9,0:3]:
+        print("liu")
+        sudoku[value,6:9,0:3]=0
+
+    elif sudoku[0][row][col] in sudoku[0,6:9,3:6]:
+        print("miu")
+        sudoku[value,6:9,3:6]=0
+
+    elif sudoku[0][row][col] in sudoku[0,6:9,6:9]:
+        print("reu")
+        sudoku[value,6:9,6:9]=0
+    return sudoku
+
+def minisquare_all(sudoku):
+    """Loop function for the minisquare"""
+    for i in range(0,9):
+        for j in range(0,9):
+            minisquare(sudoku=sudoku, row=i, col=j)
+    return sudoku
+
+def trial(sudoku):
+    sudoku = remove_duplicates(sudoku=sudoku)
+    sudoku = clear_row_all(sudoku=sudoku)
+    sudoku = clear_col_all(sudoku=sudoku)
+    sudoku = minisquare_all(sudoku=sudoku)
+    sudoku = depth_unique_all(sudoku=sudoku)
+    return sudoku
+        
 
 #   ____
 #  |  _ \ _ __ ___   __ _ _ __ __ _ _ __ ___
@@ -118,28 +175,26 @@ def clear_col_all(sudoku):
 
 def main():
     matrix=create_3d_matrix(depth=9, row=9, col=9)
-
     matrix=put_depth_in_matrix(matrix=matrix, depth=0, row=0, col=0, value=1)
     matrix=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
  
-    matrix=remove_duplicates(sudoku=matrix)
-    print(matrix)
-    print("\nTest 2\n")
+    matrix=trial(sudoku=matrix)
+    print("test1")
+    matrix=trial(sudoku=matrix)
+    print("test2")
+    matrix=trial(sudoku=matrix)
+    print("test3")
+    matrix = trial(sudoku=matrix)
+    print("test4")
+    matrix = trial(sudoku=matrix)
+    print("test5")
 
-    matrix=clear_row(sudoku=matrix, row=0, col=0)
     print(matrix)
-    matrix=clear_col(sudoku=matrix, row=0, col=0)
-    print("letzte matrix: ", matrix)
+    print("\nLLLL")
+    print(matrix[0,6:9,3:6])
 
-    matrix = clear_row(sudoku=matrix, row=1, col=1)
-    matrix = clear_col(sudoku=matrix, row=1, col=1)
-    print(matrix)
 
-    matrix = clear_row_all(sudoku=matrix)
-    print(matrix)
-
-    matrix = clear_col_all(sudoku=matrix)
-    print(matrix)
+ 
 
 if __name__ == '__main__':
     main()

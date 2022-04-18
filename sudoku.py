@@ -32,28 +32,10 @@ def put_depth_in_matrix(matrix, depth, row, col, value):
                 matrix[depth+i][row+j][col+k]=value+i
     return matrix    
 
-def check_if_matrix_is_full(matrix):
-    """Check for the beginning if everything the matrix is full"""
-    for i in range(1,4):
-        for j in range(0,3):
-            for k in range(0,3):
-                if matrix[i][j][k]==0:
-                    return False
-    return True
-
 def append_matrix_to_list(sudoku, matrix): 
     """Add the initial matrix to the tot the backtracking matrix""" 
     attached_matrix = np.append(sudoku, matrix, axis=0)
     return attached_matrix 
-
-def check_if_matrix_is_full_and_append(sudoku, matrix):
-    """Check for the beginning if everything the matrix is full"""
-    for i in range(1,3):
-        for j in range(0,2):
-            for k in range(0,2):
-                if matrix[i][j][k]==0:
-                    return False
-    return True
 
 def remove_duplicates(sudoku):
     """Removes the duplicates from the backtracking matrix"""
@@ -92,22 +74,26 @@ def clear_col(sudoku, row, col):
 
 
 def main():
-    matrix=create_3d_matrix(depth=3, row=3, col=3)
+    """matrix=create_3d_matrix(depth=3, row=3, col=3)
 
     matrix=put_depth_in_matrix(matrix=matrix, depth=0, row=0, col=0, value=1)
     matrix1=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
  
     matrix2=remove_duplicates(sudoku=matrix1)
-    print(matrix2)
-    print("\nTest 2\n")
+
     matrix3=clear_row(sudoku=matrix2, row=0, col=0)
-    print(matrix3)
+
     matrix4=clear_col(sudoku=matrix3, row=0, col=0)
-    print("letzte matrix: ", matrix4)
 
     matrix5 = clear_row(sudoku=matrix4, row=1, col=1)
     matrix6 = clear_col(sudoku=matrix5, row=1, col=1)
-    print(matrix6)
+    print(matrix6)"""
+
+    matrix=create_3d_matrix(depth=3, row=3, col=3)
+    matrix=put_depth_in_matrix(matrix=matrix, depth=0, row=0, col=0, value=1)
+    matrix=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
+    matrix=remove_duplicates(sudoku=matrix)
+    print(matrix)
 
 if __name__ == '__main__':
     main()
