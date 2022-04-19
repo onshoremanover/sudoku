@@ -7,17 +7,17 @@ from numpy.core.fromnumeric import trace
 import pandas as pd
 import numpy as np
 
-init_matrix = np.array([[[6., 2., 0.,    3., 0., 0.,    0., 0. ,0.],
-                        [ 0., 5., 8.,    7., 0., 0.,    0., 4., 0.],
-                        [ 3., 7., 0.,    0., 9., 1.,    0., 5., 0.],
+init_matrix = np.array([[[8., 0., 0.,    0., 0., 0.,    0., 0. ,0.],
+                        [ 0., 0., 3.,    6., 0., 0.,    0., 0., 0.],
+                        [ 0., 7., 0.,    0., 9., 0.,    2., 0., 0.],
 
-                        [ 0., 0., 0.,    1., 6., 0.,    0., 0., 8.],
-                        [ 5., 0., 6.,    4., 0., 0.,    1., 3., 0.],
-                        [ 0., 0., 2.,    0., 3., 0.,    0., 6., 4.],
+                        [ 0., 5., 0.,    0., 0., 7.,    0., 0., 0.],
+                        [ 0., 0., 0.,    0., 4., 5.,    7., 0., 0.],
+                        [ 0., 0., 0.,    1., 0., 0.,    0., 3., 0.],
 
-                        [ 8., 6., 0.,    0., 0., 0.,    4., 0., 0.],
-                        [ 2., 4., 0.,    6., 0., 7.,    9., 0., 5.],
-                        [ 0., 9., 0.,    2., 5., 0.,    0., 8., 3.]]])
+                        [ 0., 0., 1.,    0., 0., 0.,    0., 6., 8.],
+                        [ 0., 0., 8.,    5., 0., 0.,    0., 1., 0.],
+                        [ 0., 9., 0.,    0., 0., 0.,    4., 0., 0.]]])
                         
 
 def create_3d_matrix(row, col, depth):
@@ -112,43 +112,39 @@ def minisquare(sudoku, row, col):
     if value == 0:
         return sudoku
     
-    if sudoku[0][row][col] in sudoku[0,0:3,0:3]:
-        print("lio")
+    klein = range(0,3)
+    mittel = range(3,6)
+    gross = range(6,9)  
+
+    if row in klein and col in klein:
         sudoku[value,0:3,0:3]=0
-
-    elif sudoku[0][row][col] in sudoku[0,0:3,3:6]:
-        print("mio")
+        return sudoku
+    elif row in klein and col in mittel:
         sudoku[value,0:3,3:6]=0
-
-    elif sudoku[0][row][col] in sudoku[0,0:3,6:9]:
-        print("reo")
+        return sudoku
+    elif row in klein and col in gross:
         sudoku[value,0:3,6:9]=0
-
-    elif sudoku[0][row][col] in sudoku[0,3:6,0:3]:
-        print("lim")
+        return sudoku
+    elif row in mittel and col in klein:
         sudoku[value,3:6,0:3]=0
-
-    elif sudoku[0][row][col] in sudoku[0,3:6,3:6]:
-        print("mim")
+        return sudoku
+    elif row in mittel and col in mittel:
         sudoku[value,3:6,3:6]=0
-
-    elif sudoku[0][row][col] in sudoku[0,3:6,6:9]:
-        print("rem")
+        return sudoku
+    elif row in mittel and col in gross:
         sudoku[value,3:6,6:9]=0
-
-    elif sudoku[0][row][col] in sudoku[0,6:9,0:3]:
-        print("liu")
+        return sudoku
+    elif row in gross and col in klein:
         sudoku[value,6:9,0:3]=0
-
-    elif sudoku[0][row][col] in sudoku[0,6:9,3:6]:
-        print("miu")
+        return sudoku
+    elif row in gross and col in mittel:
         sudoku[value,6:9,3:6]=0
-
-    elif sudoku[0][row][col] in sudoku[0,6:9,6:9]:
-        print("reu")
+        return sudoku
+    elif row in gross and col in gross:
         sudoku[value,6:9,6:9]=0
+        return sudoku
     return sudoku
-
+  
 def minisquare_all(sudoku):
     """Loop function for the minisquare"""
     for i in range(0,9):
@@ -156,12 +152,48 @@ def minisquare_all(sudoku):
             minisquare(sudoku=sudoku, row=i, col=j)
     return sudoku
 
+def exclude_row(sudoku):
+    """Exclude the minisquare"""
+    for row in range(0,9):
+        for depth in range(1,9):
+            if sudoku[depth][row][sudoku[depth][row] != 0].size == 1:
+                index = np.where(sudoku[depth][row] == depth)
+                for i in range(1,9):
+                    if i != depth:
+                        sudoku[i][row][index[0]] = 0
+    return sudoku
+
+def exclude_col(sudoku):
+    """Exclude the minisquare"""
+    #alle col durchgehen
+    for col in range(0,9):
+        #backtracking depth durchgehen
+        for depth in range(1,9):
+            #wenn es nur ein eintrag in der depth gibt
+            if sudoku[depth][sudoku[depth][0:9][col] != 0].size == 1:
+                #index des eintrags in der depth
+                index = np.where(sudoku[depth][0:9][col] == depth)
+                #alle depth durchgehen
+                for i in range(1,9):
+                    if i != depth:
+                        #wenn die depth nicht die gleiche ist wie die depth
+                        #dann wird der eintrag in der depth Null gesetzt
+                        sudoku[i][index[0]][col] = 0
+    return sudoku
+    
+
+
+
+  
+
 def trial(sudoku):
     sudoku = remove_duplicates(sudoku=sudoku)
     sudoku = clear_row_all(sudoku=sudoku)
     sudoku = clear_col_all(sudoku=sudoku)
     sudoku = minisquare_all(sudoku=sudoku)
     sudoku = depth_unique_all(sudoku=sudoku)
+    sudoku = exclude_col(sudoku=sudoku)
+    sudoku = exclude_row(sudoku=sudoku)
     return sudoku
         
 
@@ -178,24 +210,15 @@ def main():
     matrix=put_depth_in_matrix(matrix=matrix, depth=0, row=0, col=0, value=1)
     matrix=append_matrix_to_list(sudoku=init_matrix, matrix=matrix)
  
-    matrix=trial(sudoku=matrix)
-    print("test1")
-    matrix=trial(sudoku=matrix)
-    print("test2")
-    matrix=trial(sudoku=matrix)
-    print("test3")
-    matrix = trial(sudoku=matrix)
-    print("test4")
-    matrix = trial(sudoku=matrix)
-    print("test5")
-
-    print(matrix)
-    print("\nLLLL")
-    print(matrix[0,6:9,3:6])
+    for i in range(0,20):
+        print("Trail: ", i+1)
+        matrix=trial(sudoku=matrix)
+    print(matrix[0])
+        
 
 
- 
+
+
 
 if __name__ == '__main__':
     main()
-

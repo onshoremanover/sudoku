@@ -1,2 +1,2 @@
-doku[value,6:9,6:9]=0
-    return
+
+if __name__ == '__main__':
