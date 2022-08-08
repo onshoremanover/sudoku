@@ -21,7 +21,7 @@ init_matrix = np.array([[[8., 0., 0.,    0., 0., 0.,    0., 0. ,0.],
                         
 
 def create_3d_matrix(row, col, depth):
-    """Creates the 3d matrix"""
+    """Creates the 3d matrix and populates them with zeros"""
     return np.zeros((row, col, depth))
 
 def put_depth_in_matrix(matrix, depth, row, col, value):
@@ -33,12 +33,12 @@ def put_depth_in_matrix(matrix, depth, row, col, value):
     return matrix    
 
 def append_matrix_to_list(sudoku, matrix): 
-    """Add the initial matrix to the front of the backtracking matrix""" 
+    """Adds the initial matrix to the front of the backtracking matrix""" 
     attached_matrix = np.append(sudoku, matrix, axis=0)
     return attached_matrix 
 
 def remove_duplicates(sudoku):
-    """Removes the duplicates from the backtracking matrix"""
+    """Removes the duplicates from the backtracking matrix as an initial step"""
     for i in range(1,10):
         for j in range(0,9):
             for k in range(0,9):
@@ -47,9 +47,8 @@ def remove_duplicates(sudoku):
     return sudoku
 
 def clear_row(sudoku, row, col):
-    """Clears the row of a single value"""
+    """Clears the row of a single value in the backtracking matrix"""
     value = int(sudoku[0][row][col])
-    #print("value von row", value)
     if value==0:
         return sudoku
     for i in range(0,9):
@@ -57,7 +56,7 @@ def clear_row(sudoku, row, col):
     return sudoku
 
 def clear_col(sudoku, row, col):
-    """Clears the cols of a single value"""
+    """Clears the cols of a single value in the backtracking matrix"""
     value = int(sudoku[0][row][col])
     if value==0:
         return sudoku
@@ -80,7 +79,7 @@ def clear_col_all(sudoku):
     return sudoku
 
 def depth_unique(sudoku, row, col,):
-    """Counts the unique numbers in the depth"""
+    """Adds the unique numbers in depth to the sudoku"""
     value = int(sudoku[0][row][col])
     a_list = []
     if value!=0:
@@ -107,7 +106,7 @@ def depth_unique_all(sudoku):
     return sudoku
 
 def minisquare(sudoku, row, col):
-    """Checks the minisquare"""
+    """checks the frontend minisquare and sets the backend of the same minisquare to zero"""
     value = int(sudoku[0][row][col])
     if value == 0:
         return sudoku
@@ -153,7 +152,7 @@ def minisquare_all(sudoku):
     return sudoku
 
 def exclude_row(sudoku):
-    """Exclude the minisquare"""
+    """Exclude the row"""
     for row in range(0,9):
         for depth in range(1,9):
             if sudoku[depth][row][sudoku[depth][row] != 0].size == 1:
@@ -164,7 +163,7 @@ def exclude_row(sudoku):
     return sudoku
 
 def exclude_col(sudoku):
-    """Exclude the minisquare"""
+    """Exclude col"""
     #alle col durchgehen
     for col in range(0,9):
         #backtracking depth durchgehen
@@ -180,10 +179,16 @@ def exclude_col(sudoku):
                         #dann wird der eintrag in der depth Null gesetzt
                         sudoku[i][index[0]][col] = 0
     return sudoku
-    
 
+def exclude_minisquare(sudoku):
+    klein = range(0, 3)
+    mittel = range(3,6)
+    gross = range(6,9)   
 
+    if minisquare.size == 1:
+        index = np.where(sudoku[minisquare] == minisquare)
 
+    return sudoku
   
 
 def trial(sudoku):
